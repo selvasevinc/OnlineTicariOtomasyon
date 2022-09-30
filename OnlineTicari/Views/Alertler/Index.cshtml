@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<br /> <br />
+<button class="btn btn-primary" id="btn1">Buton1</button>
+<button class="btn btn-warning" id="btn2">Buton2</button>
+<button class="btn btn-danger" id="btn3">Buton3</button>
+<button class="btn btn-info" id="btn4">Buton4</button>
+<button class="btn btn-light" id="btn5">Buton5</button>
+<button class="btn btn-outline-primary" id="btn6">Buton6</button>
+<button class="btn btn-outline-success" id="btn7">Film</button>
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script>
+    $('#btn1').click(function () {
+        swal("Helloooo");
+    })
+
+    $('#btn2').click(function () {
+        swal("Burası başlık", "burası metin");
+    })
+
+    $('#btn3').click(function () {
+        swal("Good job", "You clicked the button", "success");
+    })
+
+    $('#btn4').click(function () {
+        swal("Click on either the button or outside the modal.")
+            .then((value) => {
+                swal(`The returned value is: ${value}`);
+            });
+    })
+
+    $('#btn5').click(function () {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this imaginary file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    swal("Poof! Your imaginary file has been deleted!", {
+                        icon: "success",
+                    });
+                } else {
+                    swal("Your imaginary file is safe!");
+                }
+            });
+    })
+
+    $('#btn6').click(function () {
+        swal("Are you sure want to do this?", {
+            buttons: ["Oh noez!", "Aww yiss"],
+        })
+    })
+
+    $('#btn7').click(function () {
+        swal({
+            text: 'Search for a movie. e.g. "La La Land".',
+            content: "input",
+            button: {
+                text: "Search!",
+                closeModal: false,
+            },
+        })
+            .then(name => {
+                if (!name) throw null;
+
+                return fetch(`https://itunes.apple.com/search?term=${name}&entity=movie`);
+            })
+            .then(results => {
+                return results.json();
+            })
+            .then(json => {
+                const movie = json.results[0];
+
+                if (!movie) {
+                    return swal("No movie was found!");
+                }
+
+                const name = movie.trackName;
+                const imageURL = movie.artworkUrl100;
+
+                swal({
+                    title: "Top result:",
+                    text: name,
+                    icon: imageURL,
+                });
+            })
+            .catch(err => {
+                if (err) {
+                    swal("Oh noes!", "The AJAX request failed!", "error");
+                } else {
+                    swal.stopLoading();
+                    swal.close();
+                }
+            });
+    })
+</script>
